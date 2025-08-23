@@ -1,4 +1,4 @@
-using Elements.Core;
+﻿using Elements.Core;
 using FrooxEngine;
 using System;
 using System.Collections.Generic;
@@ -266,10 +266,6 @@ internal partial class Avatar
                         equalityDriver.TargetReference.Target = assignedMaterialField.Reference;
                         equalityDriver.Target.ForceLink(booleanReferenceDriver.State);
 
-                        // Makes material accessible elsewhere
-                        var dynMaterialVariable = newMaterialHolder.AttachComponent<DynamicReferenceVariable<IAssetProvider<Material>>>();
-                        dynMaterialVariable.VariableName.Value = $"Avatar/Statue.Material{oldMaterialToStatueMaterialMap.Count}";
-
                         // boolean ref driver drives this, which drives everything else
                         var multiDriver = newMaterialHolder.AttachComponent<ReferenceMultiDriver<IAssetProvider<Material>>>();
 
@@ -291,21 +287,15 @@ internal partial class Avatar
                             booleanReferenceDriver.TargetReference.ForceLink(multiDriver.Reference);
                         }
 
-                        // Drive that dynvar
-                        multiDriver.Drives.Add();
-                        multiDriver.Drives[0].ForceLink(dynMaterialVariable.Reference);
-
-                        // Add dynvar with information about the original material
-                        var originalDynVar = newMaterialHolder.AttachComponent<DynamicReferenceVariable<Slot>>();
-                        originalDynVar.VariableName.Value = $"Avatar/Statue.OriginalStatueMaterial{oldMaterialToStatueMaterialMap.Count}";
-                        originalDynVar.Reference.Target = statueMaterial!.Slot;
-
-                        if (!defaultMaterialAsIs)
+                        if (_installType == InstallType.Avatar)
                         {
-                            // Add dynvar with information about the original material it was based on
-                            var basedOnDynVar = newMaterialHolder.AttachComponent<DynamicReferenceVariable<Slot>>();
-                            basedOnDynVar.VariableName.Value = $"Avatar/Statue.BasedOnNormalMaterial{oldMaterialToStatueMaterialMap.Count}";
-                            basedOnDynVar.Reference.Target = normalMaterial!.Slot;
+                            // Makes material accessible elsewhere
+                            var dynMaterialVariable = newMaterialHolder.AttachComponent<DynamicReferenceVariable<IAssetProvider<Material>>>();
+                            dynMaterialVariable.VariableName.Value = $"Avatar/Statue.Material{oldMaterialToStatueMaterialMap.Count}";
+
+                            // Drive that dynvar
+                            multiDriver.Drives.Add();
+                            multiDriver.Drives[0].ForceLink(dynMaterialVariable.Reference);
                         }
 
                         oldMaterialToStatueMaterialMap.Add(key, multiDriver);

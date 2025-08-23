@@ -11,7 +11,7 @@ internal class WizardUi
 {
     #region Public Constructors
 
-    public WizardUi(Slot slot, string title, Avatar avatarReader, Func<Slot, Slot, SyncRef<Slot>, SyncRef<Slot>, bool> onInstall)
+    public WizardUi(Slot slot, string title, Avatar avatarReader, Func<Slot, Slot, SyncRef<Slot>, SyncRef<Slot>, InstallType, bool> onInstall)
     {
         try
         {
@@ -37,6 +37,7 @@ internal class WizardUi
             _foundMeshRenderers = Data.AddSlot("foundMRs").AttachComponent<ReferenceMultiplexer<MeshRenderer>>();
             _contextMenuSlot = Data.AddSlot("contextMenuSlot").AttachComponent<ReferenceField<Slot>>();
             _installSlot = Data.AddSlot("installSlot").AttachComponent<ReferenceField<Slot>>();
+            _installType = Data.AddSlot("installType").AttachComponent<ValueField<int>>();
 
             var UI = RadiantUI_Panel.SetupPanel(slot, title, new float2(1000f, 1000f));
             RadiantUI_Constants.SetupEditorStyle(UI);
@@ -82,7 +83,7 @@ internal class WizardUi
 
             UI.NestInto(left);
 
-            UI.SplitVertically(0.65f, out RectTransform top, out RectTransform bottom);
+            UI.SplitVertically(0.72f, out RectTransform top, out RectTransform bottom);
 
             UI.NestInto(top);
 
@@ -124,8 +125,14 @@ internal class WizardUi
             _skinnedMeshRenderersOnly = UI.HorizontalElementWithLabel("Skinned Meshes only", 0.925f, () => UI.Checkbox(true));
             _skinnedMeshRenderersOnly.State.OnValueChange += _ => OnValuesChanged(true);
 
-            UI.Text("Avatar root slot:").HorizontalAlign.Value = TextHorizontalAlignment.Left;
-            UI.Next("Avatar root slot");
+            UI.Text("Install type:").HorizontalAlign.Value = TextHorizontalAlignment.Left;
+            UI.Next("Install type");
+            var installEditor = new InstallTypeEditor();
+            installEditor.Setup(UI.Current, _installType.Value);
+            _installType.Value.OnValueChange += _ => OnValuesChanged(false);
+
+            UI.Text("Root slot:").HorizontalAlign.Value = TextHorizontalAlignment.Left;
+            UI.Next("Root slot");
             var avatarField = UI.Current.AttachComponent<RefEditor>();
             avatarField.Setup(_avatarRoot.Reference);
             _avatarRoot.Reference.OnValueChange += _ => OnValuesChanged(true);
@@ -140,8 +147,8 @@ internal class WizardUi
 
             UI.Text("Default transition type:").HorizontalAlign.Value = TextHorizontalAlignment.Left;
             UI.Next("Default transition type");
-            var editor = new StatueTypeEditor();
-            editor.Setup(UI.Current, _statueType.Value);
+            var statueEditor = new StatueTypeEditor();
+            statueEditor.Setup(UI.Current, _statueType.Value);
             _statueType.Value.OnValueChange += _ => OnValuesChanged(false);
 
             UI.Spacer(12f);
@@ -180,7 +187,7 @@ internal class WizardUi
 
             UI.NestInto(bottom);
 
-            UI.SplitVertically(0.06f, out RectTransform logHeader, out RectTransform logContent);
+            UI.SplitVertically(0.1f, out RectTransform logHeader, out RectTransform logContent);
 
             UI.NestInto(logHeader);
             var logTitle = UI.Text("Log");
@@ -313,8 +320,11 @@ Advanced mode allows more fine grained control of what materials and options to 
 Skinned Meshes only:
 Check this option to only look for SkinnedMeshRenderers. If you want to include regular MeshRenderers typically used for procedural meshes like BoxMesh etc uncheck this option.
 
-Avatar root:
-The root slot of the avatar to install to. The mod will try to find any existing legacy or remaster installations. Legacy installations can be updated to remaster. Additionally it will try to match the normal MeshRenderers with any existing statue MeshRenderers. If a MeshRenderer appears to show up twice it's likely it hasn't found a match. You can workaround this by adding "Statue" to the name of the slot.
+Install type:
+Determines whether to do a full install on an avatar or set up a snappable object for the statue system.
+
+Root slot:
+The root slot to install to. The mod will try to find any existing legacy or remaster installations. Legacy installations can be updated to remaster. Additionally it will try to match the normal MeshRenderers with any existing statue MeshRenderers. If a MeshRenderer appears to show up twice it's likely it hasn't found a match. You can workaround this by adding "Statue" to the name of the slot.
 
 Default statue material:
 The material to use as the default statue material. It can be left null if you want to use the material installed previously. Additional materials can be added later using Advanced Mode.
@@ -345,7 +355,8 @@ Updates the legacy installation to a Remaster installation on the avatar.
 """;
 
     private readonly ReferenceField<Slot>? _installSlot;
-    private readonly Func<Slot, Slot, SyncRef<Slot>, SyncRef<Slot>, bool>? _installSystemOnAvatar;
+    private readonly ValueField<int>? _installType;
+    private readonly Func<Slot, Slot, SyncRef<Slot>, SyncRef<Slot>, InstallType, bool>? _installSystemOnAvatar;
     private readonly Slot? _listPanel;
     private readonly Button? _refreshButton;
     private readonly Button? _removeNewButton;
@@ -370,7 +381,7 @@ Updates the legacy installation to a Remaster installation on the avatar.
             if (systemSlot is null)
                 return;
 
-            var result = _installSystemOnAvatar!(scratchSpace, systemSlot, _installSlot!.Reference, _contextMenuSlot!.Reference);
+            var result = _installSystemOnAvatar!(scratchSpace, systemSlot, _installSlot!.Reference, _contextMenuSlot!.Reference, (InstallType)_installType!.Value.Value);
 
             HighlightHelper.FlashHighlight(_avatarRoot!.Reference.Target, (_) => true, result ? new colorX(0.5f, 0.5f, 0.5f, 1.0f) : new colorX(1.0f, 0.0f, 0.0f, 1.0f));
             _confirmButton!.Enabled = false;
@@ -380,7 +391,7 @@ Updates the legacy installation to a Remaster installation on the avatar.
             var errorString = $"Exception while installing: {ex.ToString().ToUixLineEndings()}";
             LogError(errorString);
             LogError("Sorry! We ran into an error installing the statue system.<br>Debugging information has been copied to your clipboard; please send it to the Statue devs!<br>(Arion, Azavit, Nermerner, Uruloke)");
-            Engine.Current.InputInterface.Clipboard.SetText(_debugText!.Content.Value.ToNormalLineEndings());
+            Engine.Current.InputInterface.Clipboard?.SetText(_debugText!.Content.Value.ToNormalLineEndings());
         }
         finally
         {

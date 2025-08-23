@@ -316,8 +316,11 @@ internal partial class Avatar
             _drivers.SetParent(StatueRoot, false);
 
         // Find existing slots
-        _defaults = StatueRoot.FindChildOrAdd("Defaults");
-        _userConfig = StatueRoot.GetChildrenWithTag("StatueUserConfig").FirstOrDefault();
+        if (_installType == InstallType.Avatar)
+        {
+            _defaults = StatueRoot.FindChildOrAdd("Defaults");
+            _userConfig = StatueRoot.GetChildrenWithTag("StatueUserConfig").FirstOrDefault();
+        }
 
         _drivers = StatueRoot.FindChildOrAdd("Drivers");
         _meshes = _drivers.FindChildOrAdd("Meshes");
@@ -479,6 +482,11 @@ internal partial class Avatar
         }
     }
 
+    public void SetInstallType(InstallType installType)
+    {
+        _installType = installType;
+    }
+
     public void SetScratchSpace(Slot scratchSpace)
     {
         _scratchSpace = scratchSpace;
@@ -530,6 +538,7 @@ internal partial class Avatar
     private Slot? _defaults;
     private Slot? _drivers;
     private Slot? _generatedMaterials;
+    private InstallType _installType;
     private Slot? _legacyAddons;
     private Slot? _legacySystem;
     private Slot? _meshes;
