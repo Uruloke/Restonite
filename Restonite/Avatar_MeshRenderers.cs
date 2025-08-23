@@ -1,4 +1,4 @@
-﻿using Elements.Core;
+using Elements.Core;
 using FrooxEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +47,7 @@ internal partial class Avatar
                             renderer.Mesh.Value = foundMap.NormalMeshRenderer.Mesh.Value;
                         }
 
-                        UpdateMeshRenderer(foundMap, map.StatueSlot, renderer);
+                        foundMap.UpdateMeshRenderer(map.StatueSlot, renderer);
                     }
                     else
                     {
@@ -147,13 +147,13 @@ internal partial class Avatar
 
         Log.Debug($"Mapping {normal.ToLongString()} to {statue.ToLongString()}");
 
-        if (HasMaterialSet(normal, out var normalMaterialSet))
+        if (normal.HasMaterialSet(out var normalMaterialSet))
         {
             rendererMap.NormalMaterialSet = normalMaterialSet;
             Log.Debug($"    Normal MeshRenderer has {normalMaterialSet.ToShortString()} with {normalMaterialSet.Sets.Count} sets");
         }
 
-        if (HasMaterialSet(statue, out var statueMaterialSet))
+        if (statue.HasMaterialSet(out var statueMaterialSet))
         {
             rendererMap.StatueMaterialSet = statueMaterialSet;
             Log.Debug($"    Statue MeshRenderer has {statueMaterialSet.ToShortString()} with {statueMaterialSet.Sets.Count} sets");
@@ -218,21 +218,7 @@ internal partial class Avatar
             slot = slot.Parent;
         }
 
-        return fields.Exists(x => IsDrivenByKnownStatueDriver(x));
-    }
-
-    private void UpdateMeshRenderer(MeshRendererMap rendererMap, Slot statueSlot, MeshRenderer statue)
-    {
-        Log.Debug($"Mapping {rendererMap.NormalMeshRenderer.ToLongString()} to {statue.ToLongString()}");
-
-        rendererMap.StatueSlot = statueSlot;
-        rendererMap.StatueMeshRenderer = statue;
-
-        if (HasMaterialSet(statue, out var statueMaterialSet))
-        {
-            rendererMap.StatueMaterialSet = statueMaterialSet;
-            Log.Debug($"    Statue MeshRenderer has {statueMaterialSet.ToShortString()} with {statueMaterialSet.Sets.Count} sets");
-        }
+        return fields.Exists(x => x.IsDrivenByKnownStatueDriver());
     }
 
     #endregion

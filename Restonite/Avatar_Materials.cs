@@ -1,5 +1,6 @@
-﻿using Elements.Core;
+using Elements.Core;
 using FrooxEngine;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -335,7 +336,8 @@ internal partial class Avatar
         }
     }
 
-    #endregion
+
+    #endregion Public Methods
 
     #region Private Methods
 
@@ -381,21 +383,5 @@ internal partial class Avatar
         return defaultMaterial;
     }
 
-    private bool HasMaterialSet(MeshRenderer? renderer, [NotNullWhen(true)] out MaterialSet? materialSet)
-    {
-        if (renderer?.Materials.IsDriven == true && renderer.Materials.IsLinked)
-        {
-            var element = renderer.Materials.ActiveLink as SyncElement;
-            if (element?.Component is MaterialSet set)
-            {
-                materialSet = set;
-                return true;
-            }
-        }
-
-        materialSet = null;
-        return false;
-    }
-
-    #endregion
+    #endregion Private Methods
 }

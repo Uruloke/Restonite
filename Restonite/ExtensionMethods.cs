@@ -1,10 +1,81 @@
 ﻿using FrooxEngine;
 using FrooxEngine.UIX;
+using System.Collections.Generic;
+using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Restonite;
 
 internal static class ExtensionMethods
 {
+    public static int CommonStartSubstring(this string a, string b)
+    {
+        var commonLength = 0;
+
+        for (var i = 0; i < a.Length && i < b.Length; i++)
+        {
+            if (a[i] == b[i])
+                commonLength++;
+            else
+                break;
+        }
+
+        return commonLength;
+    }
+
+    public static Slot? FindSlot(this List<Slot> slots, Predicate<Slot> predicate, string? name = null, string? tag = null)
+    {
+        foreach (var slot in slots)
+        {
+            if (((name is null && tag is null) || (tag is not null && slot.Tag == tag) || (name is not null && slot.Name == name)) && predicate(slot))
+                return slot;
+        }
+
+        return null;
+    }
+
+    public static bool HasMaterialSet(this MeshRenderer? renderer, [NotNullWhen(true)] out MaterialSet? materialSet)
+    {
+        if (renderer?.Materials.IsDriven == true && renderer.Materials.IsLinked)
+        {
+            var element = renderer.Materials.ActiveLink as SyncElement;
+            if (element?.Component is MaterialSet set)
+            {
+                materialSet = set;
+                return true;
+            }
+        }
+
+        materialSet = null;
+        return false;
+    }
+
+    public static bool IsDrivenByKnownStatueDriver(this Sync<bool> field)
+    {
+        if (field.IsDriven && field.IsLinked && field.ActiveLink is SyncElement element)
+        {
+            if (element.Slot.Name is "Avatar/Statue.BodyStatue" or "Body Statue Active")
+                return true;
+
+            var dynVar = element.Slot.GetComponent<DynamicValueVariableDriver<bool>>(x => x.VariableName == "Avatar/Statue.BodyStatue");
+            if (dynVar is not null)
+                return true;
+
+            if (element.Component is ValueMultiDriver<bool> multiDriver)
+                return IsDrivenByKnownStatueDriver(multiDriver.Value);
+        }
+
+        return false;
+    }
+
+    public static bool IsSnappable(this Slot slot)
+    {
+        var snapper = slot.GetComponentInParents<Snapper>();
+        var snapTarget = slot.GetComponentInParents<SnapTarget>();
+
+        return snapper is not null && snapTarget is not null && snapper.Slot.Parent == snapTarget.Slot;
+    }
+
     public static void Setup(this EnumMemberEditor editor, IField target)
     {
         var ui = new UIBuilder(editor.Slot);

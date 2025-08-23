@@ -17,7 +17,7 @@ internal partial class Avatar
     public bool HasLegacySystem { get; private set; }
     public Slot? StatueRoot { get; private set; }
 
-    #endregion
+    #endregion Public Properties
 
     #region Public Methods
 
@@ -402,9 +402,9 @@ internal partial class Avatar
 
         var children = AvatarRoot.GetAllChildren();
 
-        StatueRoot = FindSlot(children, slot => slot.FindChild("Drivers") is not null && slot.FindChild("Generated Materials") is not null, "Statue", "StatueSystemSetupSlot");
-        _generatedMaterials = FindSlot(children, slot => slot.FindChild("Statue Materials") is not null && slot.FindChild("Normal Materials") is not null, "Generated Materials");
-        _drivers = FindSlot(children, slot => slot.FindChild("Avatar/Statue.BodyNormal") is not null, "Drivers");
+        StatueRoot = children.FindSlot(slot => slot.FindChild("Drivers") is not null && slot.FindChild("Generated Materials") is not null, "Statue", "StatueSystemSetupSlot");
+        _generatedMaterials = children.FindSlot(slot => slot.FindChild("Statue Materials") is not null && slot.FindChild("Normal Materials") is not null, "Generated Materials");
+        _drivers = children.FindSlot(slot => slot.FindChild("Avatar/Statue.BodyNormal") is not null, "Drivers");
 
         _legacySystem = AvatarRoot.FindChildInHierarchy("<color=#dadada>Statuefication</color>");
         _legacyAddons = AvatarRoot.FindChildInHierarchy("<color=#dadada>Statue Add-Ons</color>");
@@ -464,7 +464,7 @@ internal partial class Avatar
             {
                 foreach (var normalRenderer in normal)
                 {
-                    var statueRenderer = statue.Select(x => (CommonStartSubstring(normalRenderer.Slot.Name, x.Slot.Name), x)).OrderByDescending(x => x.Item1).Take(1).Select(x => x.Item2).FirstOrDefault();
+                    var statueRenderer = statue.Select(x => (normalRenderer.Slot.Name.CommonStartSubstring(x.Slot.Name), x)).OrderByDescending(x => x.Item1).Take(1).Select(x => x.Item2).FirstOrDefault();
                     if (statueRenderer is not null)
                     {
                         AddMeshRenderer(normalRenderer, statueRenderer, defaultMaterial, transitionType, useDefaultAsIs);
@@ -521,7 +521,7 @@ internal partial class Avatar
         }
     }
 
-    #endregion
+    #endregion Public Methods
 
     #region Private Fields
 
@@ -542,53 +542,5 @@ internal partial class Avatar
     private Slot? _statueMaterials;
     private Slot? _userConfig;
 
-    #endregion
-
-    #region Private Methods
-
-    private static Slot? FindSlot(List<Slot> slots, Predicate<Slot> predicate, string? name = null, string? tag = null)
-    {
-        foreach (var slot in slots)
-        {
-            if (((name is null && tag is null) || (tag is not null && slot.Tag == tag) || (name is not null && slot.Name == name)) && predicate(slot))
-                return slot;
-        }
-
-        return null;
-    }
-
-    private int CommonStartSubstring(string a, string b)
-    {
-        var commonLength = 0;
-
-        for (var i = 0; i < a.Length && i < b.Length; i++)
-        {
-            if (a[i] == b[i])
-                commonLength++;
-            else
-                break;
-        }
-
-        return commonLength;
-    }
-
-    private bool IsDrivenByKnownStatueDriver(Sync<bool> field)
-    {
-        if (field.IsDriven && field.IsLinked && field.ActiveLink is SyncElement element)
-        {
-            if (element.Slot.Name == "Avatar/Statue.BodyStatue" || element.Slot.Name == "Body Statue Active")
-                return true;
-
-            var dynVar = element.Slot.GetComponent<DynamicValueVariableDriver<bool>>(x => x.VariableName == "Avatar/Statue.BodyStatue");
-            if (dynVar is not null)
-                return true;
-
-            if (element.Component is ValueMultiDriver<bool> multiDriver)
-                return IsDrivenByKnownStatueDriver(multiDriver.Value);
-        }
-
-        return false;
-    }
-
-    #endregion
+    #endregion Private Fields
 }
