@@ -434,16 +434,15 @@ internal partial class Avatar
 
         MeshRenderers.Add(new MeshRendererMap
         {
-            MaterialSets = new List<List<MaterialMap>>()
-                {
-                    new List<MaterialMap>()
-                    {
+            MaterialSets =
+                [
+                    [
                         new MaterialMap
                         {
                             Statue = defaultMaterial,
                         }
-                    }
-                }
+                    ]
+                ]
         });
 
         var renderers = (skinnedMeshRenderersOnly
@@ -533,7 +532,7 @@ internal partial class Avatar
 
     #region Private Fields
 
-    private readonly List<IField<bool>> _existingDrivesForDisableOnFreeze = new();
+    private readonly List<IField<bool>> _existingDrivesForDisableOnFreeze = [];
     private Slot? _blendshapes;
     private Slot? _defaults;
     private Slot? _drivers;

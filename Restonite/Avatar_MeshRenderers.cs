@@ -1,4 +1,4 @@
-using Elements.Core;
+﻿using Elements.Core;
 using FrooxEngine;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ internal partial class Avatar
 {
     #region Public Properties
 
-    public List<MeshRendererMap> MeshRenderers { get; } = new List<MeshRendererMap>();
+    public List<MeshRendererMap> MeshRenderers { get; } = [];
 
     #endregion
 
@@ -114,7 +114,7 @@ internal partial class Avatar
         RemoveMeshRenderer(map);
     }
 
-    public void RemoveMeshRenderer(MeshRendererMap map)
+    public void RemoveMeshRenderer(MeshRendererMap? map)
     {
         if (map is not null)
         {
@@ -171,8 +171,8 @@ internal partial class Avatar
         }
         else
         {
-            rendererMap.MaterialSets = new List<List<MaterialMap>>()
-                {
+            rendererMap.MaterialSets =
+                [
                     normal.Materials.Select(x => new MaterialMap
                     {
                         Normal = x,
@@ -180,7 +180,7 @@ internal partial class Avatar
                         TransitionType = transitionType,
                         UseAsIs = useDefaultAsIs,
                     }).ToList()
-                };
+                ];
         }
 
         for (int set = 0; set < rendererMap.MaterialSets.Count; set++)
