@@ -65,7 +65,7 @@ internal partial class Avatar
             meshCopy.Target.Value = map.StatueSlot.ActiveSelf_Field.ReferenceID;
 
             var count = 0;
-            for (var j = 0; j < normalSmr.BlendShapeCount; j++)
+            for (var j = 0; j < normalSmr.MeshBlendshapeCount; j++)
             {
                 try
                 {
