@@ -3,6 +3,7 @@ using FrooxEngine.UIX;
 using System.Collections.Generic;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using Elements.Assets;
 
 namespace Restonite;
 
@@ -86,17 +87,22 @@ internal static class ExtensionMethods
     public static string ToLongString(this Component? component)
     {
         if (component is null)
-            return "null";
+            return "<color=hero.orange>null</color>";
         else
-            return $"{component.GetType().Name}/{component.ReferenceID} on {component.Slot.Name}";
+            return $"<color=hero.purple>{component.GetType().Name}</color> <color=gray>[{component.ReferenceID}]</color> on <color=hero.yellow>{component.Slot.Name.StripRTFTags()}</color>";
     }
 
     public static string ToLongString(this IAssetProvider<Material>? material)
     {
         if (material is null)
-            return "null";
+            return "<color=hero.orange>null</color>";
         else
-            return $"{material.GetType().Name}/{material.ReferenceID} on {material.Slot.Name}";
+            return $"<color=hero.purple>{material.GetType().Name}</color> <color=gray>[{material.ReferenceID}]</color> on <color=hero.yellow>{material.Slot.Name.StripRTFTags()}</color>";
+    }
+
+    public static string StripRTFTags(this string text)
+    {
+        return new StringRenderTree(text).GetRawString();
     }
 
     public static string ToNormalLineEndings(this string text)
@@ -107,25 +113,25 @@ internal static class ExtensionMethods
     public static string ToShortString(this Component? component)
     {
         if (component is null)
-            return "null";
+            return "<color=hero.orange>null</color>";
         else
-            return $"{component.GetType().Name}/{component.ReferenceID}";
+            return $"<color=hero.purple>{component.GetType().Name}</color> <color=gray>[{component.ReferenceID}]</color>";
     }
 
     public static string ToShortString(this IAssetProvider<Material>? material)
     {
         if (material is null)
-            return "null";
+            return "<color=hero.orange>null</color>";
         else
-            return $"{material.GetType().Name}/{material.ReferenceID}";
+            return $"<color=hero.purple>{material.GetType().Name}</color> <color=gray>[{material.ReferenceID}]</color>";
     }
 
     public static string ToShortString(this Slot? slot)
     {
         if (slot is null)
-            return "null";
+            return "<color=hero.orange>null</color>";
         else
-            return $"{slot.Name}/{slot.ReferenceID}";
+            return $"<color=hero.yellow>{slot.Name.StripRTFTags()}</color> <color=gray>[{slot.ReferenceID}]</color>";
     }
 
     public static string ToUixLineEndings(this string text)

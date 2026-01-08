@@ -391,7 +391,7 @@ Updates the legacy installation to a Remaster installation on the avatar.
             var errorString = $"Exception while installing: {ex.ToString().ToUixLineEndings()}";
             LogError(errorString);
             LogError("Sorry! We ran into an error installing the statue system.<br>Debugging information has been copied to your clipboard; please send it to the Statue devs!<br>(Arion, Azavit, Nermerner, Uruloke)");
-            Engine.Current.InputInterface.Clipboard?.SetText(_debugText!.Content.Value.ToNormalLineEndings());
+            Engine.Current.InputInterface.Clipboard?.SetText(_debugText!.Content.Value.ToNormalLineEndings().StripRTFTags());
         }
         finally
         {
