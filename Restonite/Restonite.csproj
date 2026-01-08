@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <AssemblyTitle>Restonite</AssemblyTitle>
@@ -6,7 +6,7 @@
     <RootNamespace>Restonite</RootNamespace>
     <Title>Restonite</Title>
     <Authors>Nermerner, Uruloke</Authors>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <Description>A Resonite Mod Loader mod used to assist in the setup of the Statufication system on avatars.</Description>
     <LangVersion>12</LangVersion>
@@ -28,7 +28,7 @@
     <Reference Include="SkyFrost.Base">
       <HintPath>$(ResonitePath)SkyFrost.Base.dll</HintPath>
     </Reference>
-	  <Reference Include="SkyFrost.Base.Models">
+    <Reference Include="SkyFrost.Base.Models">
       <HintPath>$(ResonitePath)SkyFrost.Base.Models.dll</HintPath>
     </Reference>
     <Reference Include="Elements.Core">
