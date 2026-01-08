@@ -1,4 +1,4 @@
-﻿using FrooxEngine;
+using FrooxEngine;
 
 namespace Restonite;
 
@@ -94,6 +94,22 @@ internal static partial class MaterialHelpers
             case StatueType.AlphaFade:
                 switch (originalMaterial)
                 {
+                    case PBS_MultiUV_Metallic muvm:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_MultiUV_Metallic>();
+                            MaterialHelpers.SetupAlphaFadeMultiUvMaterial(muvm, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBS_MultiUV_Specular muvs:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_MultiUV_Specular>();
+                            MaterialHelpers.SetupAlphaFadeMultiUvMaterial(muvs, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
                     case PBS_DualSidedMetallic dsm:
                         {
                             Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
@@ -107,6 +123,54 @@ internal static partial class MaterialHelpers
                             Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
                             var newMaterial = destination.AttachComponent<PBS_DualSidedSpecular>();
                             MaterialHelpers.SetupAlphaFadeDualsidedMaterial(dss, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBS_VertexColorMetallic vcm:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_VertexColorMetallic>();
+                            MaterialHelpers.SetupAlphaFadeVertexColorMaterial(vcm, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBS_VertexColorSpecular vcs:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_VertexColorSpecular>();
+                            MaterialHelpers.SetupAlphaFadeVertexColorMaterial(vcs, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBS_DisplaceMetallic dm:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_DisplaceMetallic>();
+                            MaterialHelpers.SetupAlphaFadeDisplaceMaterial(dm, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBS_DisplaceSpecular ds:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBS_DisplaceSpecular>();
+                            MaterialHelpers.SetupAlphaFadeDisplaceMaterial(ds, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBSLerpMetallic lm:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBSLerpMetallic>();
+                            MaterialHelpers.SetupAlphaFadeLerpMaterial(lm, newMaterial, destination);
+                            newMaterial.Persistent = true;
+                            return newMaterial;
+                        }
+                    case PBSLerpSpecular ls:
+                        {
+                            Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                            var newMaterial = destination.AttachComponent<PBSLerpSpecular>();
+                            MaterialHelpers.SetupAlphaFadeLerpMaterial(ls, newMaterial, destination);
                             newMaterial.Persistent = true;
                             return newMaterial;
                         }
@@ -150,6 +214,22 @@ internal static partial class MaterialHelpers
                 {
                     switch (originalMaterial)
                     {
+                        case PBS_MultiUV_Metallic muvm:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_MultiUV_Metallic>();
+                                MaterialHelpers.SetupAlphaCutoutMultiUvMaterial(muvm, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBS_MultiUV_Specular muvs:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_MultiUV_Specular>();
+                                MaterialHelpers.SetupAlphaCutoutMultiUvMaterial(muvs, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
                         case PBS_DualSidedMetallic dsm:
                             {
                                 Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
@@ -163,6 +243,54 @@ internal static partial class MaterialHelpers
                                 Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
                                 var newMaterial = destination.AttachComponent<PBS_DualSidedSpecular>();
                                 MaterialHelpers.SetupAlphaCutoutDualsidedMaterial(dss, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBS_VertexColorMetallic vcm:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_VertexColorMetallic>();
+                                MaterialHelpers.SetupAlphaCutoutVertexColorMaterial(vcm, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBS_VertexColorSpecular vcs:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_VertexColorSpecular>();
+                                MaterialHelpers.SetupAlphaCutoutVertexColorMaterial(vcs, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBS_DisplaceMetallic dm:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_DisplaceMetallic>();
+                                MaterialHelpers.SetupAlphaCutoutDisplaceMaterial(dm, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBS_DisplaceSpecular ds:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBS_DisplaceSpecular>();
+                                MaterialHelpers.SetupAlphaCutoutDisplaceMaterial(ds, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBSLerpMetallic lm:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBSLerpMetallic>();
+                                MaterialHelpers.SetupAlphaCutoutLerpMaterial(lm, newMaterial, destination);
+                                newMaterial.Persistent = true;
+                                return newMaterial;
+                            }
+                        case PBSLerpSpecular ls:
+                            {
+                                Log.Debug($"Creating {originalMaterial.GetType().Name} as {statueType}");
+                                var newMaterial = destination.AttachComponent<PBSLerpSpecular>();
+                                MaterialHelpers.SetupAlphaCutoutLerpMaterial(ls, newMaterial, destination);
                                 newMaterial.Persistent = true;
                                 return newMaterial;
                             }

@@ -325,7 +325,11 @@ internal partial class Avatar
                             return false;
                         }
                         else if ((material.TransitionType == StatueType.AlphaFade || material.TransitionType == StatueType.AlphaCutout)
+                            && material.Normal is not PBS_MultiUV_Metallic && material.Normal is not PBS_MultiUV_Specular
                             && material.Normal is not PBS_DualSidedMetallic && material.Normal is not PBS_DualSidedSpecular
+                            && material.Normal is not PBS_VertexColorMetallic && material.Normal is not PBS_VertexColorSpecular
+                            && material.Normal is not PBS_DisplaceMetallic && material.Normal is not PBS_DisplaceSpecular
+                            && material.Normal is not PBSLerpMetallic && material.Normal is not PBSLerpSpecular
                             && material.Normal is not IPBS_Metallic && material.Normal is not IPBS_Specular
                             && material.Normal is not XiexeToonMaterial && material.Normal is not PBS_DistanceLerpMaterial
                             && material.Normal is not UnlitMaterial)
