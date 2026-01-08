@@ -1,4 +1,4 @@
-using FrooxEngine;
+﻿using FrooxEngine;
 
 namespace Restonite;
 
@@ -387,7 +387,7 @@ internal static partial class MaterialHelpers
                 }
         }
 
-        destination.NameField.Value = "Failed To Create Material";
+        destination.Name_Field.Value = "Failed To Create Material";
         return originalMaterial;
     }
 }
