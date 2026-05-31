@@ -24,7 +24,11 @@ internal partial class Avatar
         // Move all materials to scratch space slot temporarily
         foreach (var material in MeshRenderers.SelectMany(x => x.MaterialSets).SelectMany(x => x))
         {
-            if (material.Normal is not null && material.Normal.Slot != normalMaterials)
+            // Skip material slots where either material is null
+            if(material.Normal is null || material.Statue is null)
+                continue;
+
+            if (material.Normal.Slot != normalMaterials)
             {
                 Log.Debug($"Copying {material.Normal.ToLongString()} to {normalMaterials.ToShortString()}");
                 var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Normal, normalMaterials);
@@ -32,7 +36,7 @@ internal partial class Avatar
                 ChangeMaterialReferences(material.Normal, newMaterial);
             }
 
-            if (material.Statue is not null && material.Statue.Slot != statueMaterials)
+            if (material.Statue.Slot != statueMaterials)
             {
                 Log.Debug($"Copying {material.Statue.ToLongString()} to {statueMaterials.ToShortString()}");
                 var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Statue, statueMaterials);
@@ -56,7 +60,11 @@ internal partial class Avatar
                 {
                     var material = meshRendererMap.MaterialSets[materialSet][materialIndex];
 
-                    if (material.Normal is not null && !normalList.Contains(material.Normal.ReferenceID))
+                    // Skip material slots where either material is null
+                    if(material.Normal is null || material.Statue is null)
+                        continue;
+
+                    if (!normalList.Contains(material.Normal.ReferenceID))
                     {
                         var slot = _originalNormalMaterials.AddSlot($"{normalList.Count}: {meshRendererMap.NormalSlot!.Name}.Set{materialSet}.Material{materialIndex}");
                         var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Normal, slot);
@@ -64,7 +72,7 @@ internal partial class Avatar
                         normalList.Add(material.Normal.ReferenceID);
                     }
 
-                    if (material.Statue is not null && !statueList.Contains(material.Statue.ReferenceID))
+                    if (!statueList.Contains(material.Statue.ReferenceID))
                     {
                         var slot = _originalStatueMaterials.AddSlot(meshRendererMap.StatueSlot is null
                             ? $"{statueList.Count}: Default"
@@ -101,7 +109,8 @@ internal partial class Avatar
             {
                 for (int slot = 0; slot < map.MaterialSets[set].Count; ++slot)
                 {
-                    if (map.MaterialSets[set][slot].Normal is null)
+                    // Skip material slots where either material is null
+                    if (map.MaterialSets[set][slot].Normal is null || map.MaterialSets[set][slot].Statue is null)
                         continue;
 
                     var name = $"{map.NormalMeshRenderer.ToLongString()}, material set {set}, slot {slot}";
@@ -218,7 +227,7 @@ internal partial class Avatar
                     if (statueMaterial is null)
                         continue;
 
-                    if (!isBlinder && normalMaterial is null && statueMaterial is not null)
+                    if (!isBlinder && normalMaterial is null)
                     {
                         Log.Warn($"{map.NormalMeshRenderer.ToLongString()}, material {slot} is null, skipping statue material");
                         continue;

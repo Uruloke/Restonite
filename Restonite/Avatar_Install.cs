@@ -338,15 +338,14 @@ internal partial class Avatar
                             return false;
                         }
                     }
-
-                    // Check for missing statue materials
-                    if (material.Statue is null || material.Statue.ReferenceID == RefID.Null)
-                    {
-                        Log.Error("Missing default statue material for some material slots, aborting");
-                        return false;
-                    }
                 }
             }
+        }
+
+        if(MeshRenderers.All(x => x.MaterialSets.All(y => y.All(z => z.Statue is null || z.Statue.ReferenceID == RefID.Null))))
+        {
+            Log.Error("No material slots have default statue materials, aborting");
+            return false;
         }
 
         return true;
