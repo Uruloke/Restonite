@@ -77,6 +77,33 @@ internal static class ExtensionMethods
         return snapper is not null && snapTarget is not null && snapper.Slot.Parent == snapTarget.Slot;
     }
 
+    public static void CopySyncDrivers(this Component source, Component target)
+    {
+        for(var i = 0; i < source.SyncMemberCount; i++)
+        {
+            var sourceSyncMember = source.GetSyncMember(i);
+
+            // Find matching member in destination
+            for(var j = 0; j < target.SyncMemberCount; j++)
+            {
+                var targetSyncMember = target.GetSyncMember(i);
+
+                if (sourceSyncMember.Name == targetSyncMember.Name && sourceSyncMember.GetType() == targetSyncMember.GetType()
+                    && sourceSyncMember.IsDriven && sourceSyncMember.IsLinked && !targetSyncMember.IsDriven && !targetSyncMember.IsLinked)
+                {
+                    if (sourceSyncMember is IField sourceField && targetSyncMember is IField targetField)
+                    {
+                        targetField.DriveFrom(sourceField);
+                    }
+                    else if (sourceSyncMember is ISyncRef sourceRef && targetSyncMember is ISyncRef targetRef)
+                    {
+                        targetRef.DriveFromRef(sourceRef);
+                    }
+                }
+            }
+        }
+    }
+
     public static void Setup(this EnumMemberEditor editor, IField target)
     {
         var ui = new UIBuilder(editor.Slot);

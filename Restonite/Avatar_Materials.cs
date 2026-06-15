@@ -1,4 +1,4 @@
-﻿using Elements.Core;
+using Elements.Core;
 using FrooxEngine;
 using System;
 using System.Collections.Generic;
@@ -164,6 +164,10 @@ internal partial class Avatar
                         {
                             multiDriver.Reference.Target = newMaterial;
                         }
+
+                        // Value/ReferenceCopy any drives from the old material
+                        // to the new that isn't being used by the statue system
+                        ((Component)oldMaterial).CopySyncDrivers((Component)newMaterial);
 
                         oldMaterialToNewNormalMaterialMap.Add(key, multiDriver);
                     }
