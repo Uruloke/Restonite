@@ -35,12 +35,7 @@ internal class StatueSystemWizard
             if (!_avatar.DuplicateMeshes())
                 return false;
 
-            // Materials:
-            // 1. For each material that needs to be created, create a driver and default material
-            // 2. For each old material, give it an appropriate blend mode
-
-            // Create a map of normal materials -> statue materials
-            _avatar.CollectMaterials();
+            // Generate materials used by the system
             _avatar.GenerateNormalMaterials();
             _avatar.GenerateStatueMaterials();
 
@@ -51,6 +46,9 @@ internal class StatueSystemWizard
             _avatar.CreateOrUpdateVoiceDrivers();
 
             _avatar.CreateOrUpdateDefaults();
+
+            // Save the configuration used for later
+            _avatar.SaveLastConfiguration();
 
             Log.Success("Setup completed successfully!");
             Log.Success("Re-equip your avatar before testing the system.");
@@ -64,12 +62,7 @@ internal class StatueSystemWizard
             if (!_avatar.DuplicateMeshes())
                 return false;
 
-            // Materials:
-            // 1. For each material that needs to be created, create a driver and default material
-            // 2. For each old material, give it an appropriate blend mode
-
-            // Create a map of normal materials -> statue materials
-            _avatar.CollectMaterials();
+            // Generate materials used by the system
             _avatar.GenerateNormalMaterials();
             _avatar.GenerateStatueMaterials();
 
@@ -77,6 +70,9 @@ internal class StatueSystemWizard
             _avatar.CopyBlendshapes();
             _avatar.CreateOrUpdateEnableDrivers();
             _avatar.CreateOrUpdateDisableOnFreeze();
+
+            // Save the configuration used for later
+            _avatar.SaveLastConfiguration();
 
             Log.Success("Setup completed successfully!");
         }

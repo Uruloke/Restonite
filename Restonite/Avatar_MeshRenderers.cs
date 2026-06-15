@@ -145,6 +145,8 @@ internal partial class Avatar
             StatueMeshRenderer = statue,
         };
 
+        var lastConfig = FindConfiguration(normal);
+
         Log.Debug($"Mapping {normal.ToLongString()} to {statue.ToLongString()}");
 
         if (normal.HasMaterialSet(out var normalMaterialSet))
@@ -181,6 +183,25 @@ internal partial class Avatar
                         UseAsIs = useDefaultAsIs,
                     }).ToList()
                 ];
+        }
+
+        // Set material properties according to last saved configuration
+        if(lastConfig?.MaterialSets.Count == rendererMap.MaterialSets.Count)
+        {
+            for(var set = 0; set < rendererMap.MaterialSets.Count; set++)
+            {
+                if(lastConfig.MaterialSets[set].Count == rendererMap.MaterialSets[set].Count)
+                {
+                    for(var i = 0; i < rendererMap.MaterialSets[set].Count; i++)
+                    {
+                        rendererMap.MaterialSets[set][i].Normal = lastConfig.MaterialSets[set][i].Normal;
+                        rendererMap.MaterialSets[set][i].Statue = lastConfig.MaterialSets[set][i].Statue;
+                        rendererMap.MaterialSets[set][i].TransitionType = lastConfig.MaterialSets[set][i].TransitionType;
+                        rendererMap.MaterialSets[set][i].UseAsIs = lastConfig.MaterialSets[set][i].UseAsIs;
+                        rendererMap.MaterialSets[set][i].Clothes = lastConfig.MaterialSets[set][i].Clothes;
+                    }
+                }
+            }
         }
 
         for (int set = 0; set < rendererMap.MaterialSets.Count; set++)

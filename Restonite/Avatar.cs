@@ -326,10 +326,6 @@ internal partial class Avatar
         _meshes = _drivers.FindChildOrAdd("Meshes");
         _blendshapes = _drivers.FindChildOrAdd("Blend Shapes");
 
-        _originalMaterials = StatueRoot.FindChildOrAdd("Original Materials");
-        _originalStatueMaterials = _originalMaterials.FindChildOrAdd("Statue Materials");
-        _originalNormalMaterials = _originalMaterials.FindChildOrAdd("Normal Materials");
-
         _generatedMaterials = StatueRoot.FindChildOrAdd("Generated Materials");
         _statueMaterials = _generatedMaterials.FindChildOrAdd("Statue Materials");
         _normalMaterials = _generatedMaterials.FindChildOrAdd("Normal Materials");
@@ -422,6 +418,10 @@ internal partial class Avatar
         {
             HasExistingSystem = true;
             Log.Info("Avatar has existing Remaster system");
+
+            var lastConfigurationSlot = children.FindSlot(slot => slot.Parent == StatueRoot, null, "StatueSystemLastConfiguration");
+            if(lastConfigurationSlot is not null)
+                ParseLastConfiguration(lastConfigurationSlot);
         }
 
         if (_legacySystem is not null || _legacyAddons is not null)
@@ -516,6 +516,8 @@ internal partial class Avatar
 
         foreach (var map in MeshRenderers)
         {
+            var lastConfig = FindConfiguration(map.NormalMeshRenderer);
+
             foreach (var set in map.MaterialSets)
             {
                 foreach (var mat in set)
@@ -523,6 +525,24 @@ internal partial class Avatar
                     mat.Statue = defaultMaterial;
                     mat.UseAsIs = useDefaultAsIs;
                     mat.TransitionType = transitionType;
+                }
+            }
+
+            // Set material properties according to last saved configuration
+            if(lastConfig?.MaterialSets.Count == map.MaterialSets.Count)
+            {
+                for(var set = 0; set < map.MaterialSets.Count; set++)
+                {
+                    if(lastConfig.MaterialSets[set].Count == map.MaterialSets[set].Count)
+                    {
+                        for(var i = 0; i < map.MaterialSets[set].Count; i++)
+                        {
+                            map.MaterialSets[set][i].Statue = lastConfig.MaterialSets[set][i].Statue;
+                            map.MaterialSets[set][i].TransitionType = lastConfig.MaterialSets[set][i].TransitionType;
+                            map.MaterialSets[set][i].UseAsIs = lastConfig.MaterialSets[set][i].UseAsIs;
+                            map.MaterialSets[set][i].Clothes = lastConfig.MaterialSets[set][i].Clothes;
+                        }
+                    }
                 }
             }
         }
@@ -542,9 +562,6 @@ internal partial class Avatar
     private Slot? _legacySystem;
     private Slot? _meshes;
     private Slot? _normalMaterials;
-    private Slot? _originalMaterials;
-    private Slot? _originalNormalMaterials;
-    private Slot? _originalStatueMaterials;
     private Slot? _scratchSpace;
     private bool _skinnedMeshRenderersOnly;
     private Slot? _statueMaterials;

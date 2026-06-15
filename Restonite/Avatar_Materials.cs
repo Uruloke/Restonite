@@ -1,4 +1,4 @@
-using Elements.Core;
+﻿using Elements.Core;
 using FrooxEngine;
 using System;
 using System.Collections.Generic;
@@ -10,81 +10,6 @@ namespace Restonite;
 internal partial class Avatar
 {
     #region Public Methods
-
-    public void CollectMaterials()
-    {
-        if (_scratchSpace is null || _originalNormalMaterials is null || _originalStatueMaterials is null)
-            return;
-
-        Log.Info("=== Collecting avatar materials");
-
-        var normalMaterials = _scratchSpace.AddSlot("Normal Materials");
-        var statueMaterials = _scratchSpace.AddSlot("Statue Materials");
-
-        // Move all materials to scratch space slot temporarily
-        foreach (var material in MeshRenderers.SelectMany(x => x.MaterialSets).SelectMany(x => x))
-        {
-            // Skip material slots where either material is null
-            if(material.Normal is null || material.Statue is null)
-                continue;
-
-            if (material.Normal.Slot != normalMaterials)
-            {
-                Log.Debug($"Copying {material.Normal.ToLongString()} to {normalMaterials.ToShortString()}");
-                var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Normal, normalMaterials);
-
-                ChangeMaterialReferences(material.Normal, newMaterial);
-            }
-
-            if (material.Statue.Slot != statueMaterials)
-            {
-                Log.Debug($"Copying {material.Statue.ToLongString()} to {statueMaterials.ToShortString()}");
-                var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Statue, statueMaterials);
-
-                ChangeMaterialReferences(material.Statue, newMaterial);
-            }
-        }
-
-        _originalNormalMaterials.DestroyChildren();
-        _originalStatueMaterials.DestroyChildren();
-
-        // Generate original material lists
-        var normalList = new List<RefID>();
-        var statueList = new List<RefID>();
-
-        foreach (var meshRendererMap in MeshRenderers)
-        {
-            for (int materialSet = 0; materialSet < meshRendererMap.MaterialSets.Count; materialSet++)
-            {
-                for (int materialIndex = 0; materialIndex < meshRendererMap.MaterialSets[materialSet].Count; materialIndex++)
-                {
-                    var material = meshRendererMap.MaterialSets[materialSet][materialIndex];
-
-                    // Skip material slots where either material is null
-                    if(material.Normal is null || material.Statue is null)
-                        continue;
-
-                    if (!normalList.Contains(material.Normal.ReferenceID))
-                    {
-                        var slot = _originalNormalMaterials.AddSlot($"{normalList.Count}: {meshRendererMap.NormalSlot!.Name}.Set{materialSet}.Material{materialIndex}");
-                        var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Normal, slot);
-                        ChangeMaterialReferences(material.Normal, newMaterial);
-                        normalList.Add(material.Normal.ReferenceID);
-                    }
-
-                    if (!statueList.Contains(material.Statue.ReferenceID))
-                    {
-                        var slot = _originalStatueMaterials.AddSlot(meshRendererMap.StatueSlot is null
-                            ? $"{statueList.Count}: Default"
-                            : $"{statueList.Count}: {meshRendererMap.StatueSlot.Name}.Set{materialSet}.Material{materialIndex}");
-                        var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Statue, slot);
-                        ChangeMaterialReferences(material.Statue, newMaterial);
-                        statueList.Add(material.Statue.ReferenceID);
-                    }
-                }
-            }
-        }
-    }
 
     public void GenerateNormalMaterials()
     {
@@ -123,20 +48,10 @@ internal partial class Avatar
                     {
                         Log.Info($"Creating normal material {oldMaterialToNewNormalMaterialMap.Count} for {oldMaterial.ToLongString()} using {statueType}");
 
-                        var newSlot = _normalMaterials.AddSlot($"{oldMaterialToNewNormalMaterialMap.Count}: {map.NormalSlot!.Name}.Set{set}.Material{slot}");
+                        var newSlot = _normalMaterials.AddSlot($"{oldMaterialToNewNormalMaterialMap.Count}: <color=hero.yellow>{map.NormalSlot!.Name.StripRTFTags()}</color> <color=hero.green>[Set {set}]</color> <color=hero.cyan>[Material {slot}]</color>");
 
                         // Create material based on transition type
                         var newMaterial = MaterialHelpers.CreateAlphaMaterial(oldMaterial, statueType, newSlot);
-
-                        // Add dynvar with information about what transition type was used
-                        var typeDynVar = newSlot.AttachComponent<DynamicValueVariable<string>>();
-                        typeDynVar.VariableName.Value = $"Avatar/Statue.TransitionType{oldMaterialToNewNormalMaterialMap.Count}";
-                        typeDynVar.Value.Value = $"{statueType}";
-
-                        // Add dynvar with information about the original material
-                        var originalDynVar = newSlot.AttachComponent<DynamicReferenceVariable<Slot>>();
-                        originalDynVar.VariableName.Value = $"Avatar/Statue.OriginalNormalMaterial{oldMaterialToNewNormalMaterialMap.Count}";
-                        originalDynVar.Reference.Target = oldMaterial.Slot;
 
                         // boolean ref driver drives this, which drives everything else
                         var multiDriver = newSlot.AttachComponent<ReferenceMultiDriver<IAssetProvider<Material>>>();
@@ -252,7 +167,7 @@ internal partial class Avatar
                         // SMR, has default material with normal map)
                         var newMaterialHolder = _statueMaterials.AddSlot(map.StatueSlot is null
                             ? $"{oldMaterialToStatueMaterialMap.Count}: Default"
-                            : $"{oldMaterialToStatueMaterialMap.Count}: {map.StatueSlot.Name}.Set{set}.Material{slot}");
+                            : $"{oldMaterialToStatueMaterialMap.Count}: <color=hero.yellow>{map.StatueSlot!.Name.StripRTFTags()}</color> <color=hero.green>[Set {set}]</color> <color=hero.cyan>[Material {slot}]</color>");
 
                         var newDefaultMaterialRefId = defaultMaterialAsIs
                             ? newMaterialHolder.CopyComponent((AssetProvider<Material>)statueMaterial!).ReferenceID
@@ -338,7 +253,6 @@ internal partial class Avatar
             }
         }
     }
-
 
     #endregion Public Methods
 
