@@ -25,17 +25,17 @@ internal partial class Avatar
             var dynVarSpace = meshRendererSlot.AttachComponent<DynamicVariableSpace>();
             dynVarSpace.SpaceName.Value = "MeshRendererConfig";
 
-            DynamicVariableHelper.CreateVariable<MaterialSet>(meshRendererSlot, "MeshRendererConfig/NormalMaterialSet", map.NormalMaterialSet);
-            DynamicVariableHelper.CreateVariable<MeshRenderer>(meshRendererSlot, "MeshRendererConfig/NormalMeshRenderer", map.NormalMeshRenderer);
+            DynamicVariableHelper.CreateVariable<MaterialSet>(meshRendererSlot, "MeshRendererConfig/NormalMaterialSet", map.NormalMaterialSet!);
+            DynamicVariableHelper.CreateVariable<MeshRenderer>(meshRendererSlot, "MeshRendererConfig/NormalMeshRenderer", map.NormalMeshRenderer!);
             DynamicVariableHelper.CreateVariable<Slot>(meshRendererSlot, "MeshRendererConfig/NormalSlot", map.NormalSlot);
-            DynamicVariableHelper.CreateVariable<MaterialSet>(meshRendererSlot, "MeshRendererConfig/StatueMaterialSet", map.StatueMaterialSet);
-            DynamicVariableHelper.CreateVariable<MeshRenderer>(meshRendererSlot, "MeshRendererConfig/StatueMeshRenderer", map.StatueMeshRenderer);
-            DynamicVariableHelper.CreateVariable<Slot>(meshRendererSlot, "MeshRendererConfig/StatueSlot", map.StatueSlot);
+            DynamicVariableHelper.CreateVariable<MaterialSet>(meshRendererSlot, "MeshRendererConfig/StatueMaterialSet", map.StatueMaterialSet!);
+            DynamicVariableHelper.CreateVariable<MeshRenderer>(meshRendererSlot, "MeshRendererConfig/StatueMeshRenderer", map.StatueMeshRenderer!);
+            DynamicVariableHelper.CreateVariable<Slot>(meshRendererSlot, "MeshRendererConfig/StatueSlot", map.StatueSlot!);
 
             for(var set = 0; set < map.MaterialSets.Count; set++)
             {
                 var setSlot = meshRendererSlot.AddSlot($"<color=hero.green>Material Set {set}</color>");
-                meshRendererSlot.Tag_Field.Value = null;
+                meshRendererSlot.Tag_Field.Value = null!;
 
                 for(var index = 0; index < map.MaterialSets[set].Count; index++)
                 {
@@ -45,8 +45,8 @@ internal partial class Avatar
                     materialDynVarSpace.SpaceName.Value = "MaterialSlotConfig";
 
                     DynamicVariableHelper.CreateVariable<bool>(materialSlot, "MaterialSlotConfig/Clothes", map.MaterialSets[set][index].Clothes);
-                    DynamicVariableHelper.CreateVariable<IAssetProvider<Material>>(materialSlot, "MaterialSlotConfig/Normal", map.MaterialSets[set][index].Normal);
-                    DynamicVariableHelper.CreateVariable<IAssetProvider<Material>>(materialSlot, "MaterialSlotConfig/Statue", map.MaterialSets[set][index].Statue);
+                    DynamicVariableHelper.CreateVariable<IAssetProvider<Material>>(materialSlot, "MaterialSlotConfig/Normal", map.MaterialSets[set][index].Normal!);
+                    DynamicVariableHelper.CreateVariable<IAssetProvider<Material>>(materialSlot, "MaterialSlotConfig/Statue", map.MaterialSets[set][index].Statue!);
                     DynamicVariableHelper.CreateVariable<int>(materialSlot, "MaterialSlotConfig/TransitionType", (int)map.MaterialSets[set][index].TransitionType);
                     DynamicVariableHelper.CreateVariable<bool>(materialSlot, "MaterialSlotConfig/UseAsIs", map.MaterialSets[set][index].UseAsIs);
 
@@ -123,7 +123,7 @@ internal partial class Avatar
         }
     }
 
-    private MeshRendererMap? FindConfiguration(MeshRenderer meshRenderer)
+    private MeshRendererMap? FindConfiguration(MeshRenderer? meshRenderer)
     {
         foreach(var map in _lastConfiguration)
         {

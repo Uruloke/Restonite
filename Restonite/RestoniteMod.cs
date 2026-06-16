@@ -13,7 +13,7 @@ public class RestoniteMod : ResoniteMod
     public override string Name => "Restonite";
     public override string Author => "Nermerner, Uruloke";
 
-    public static Version AssemblyVersion => typeof(RestoniteMod).Assembly.GetName().Version;
+    public static Version AssemblyVersion => typeof(RestoniteMod).Assembly.GetName().Version!;
     public override string Version => $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}.{AssemblyVersion.Build}";
 
     public override string Link => "https://github.com/Nermerner/Restonite";

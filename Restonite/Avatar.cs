@@ -332,7 +332,7 @@ internal partial class Avatar
 
         // Clear up tags from adding slots
         foreach (var slot in StatueRoot.GetChildrenWithTag("StatueSystemSetupSlot").Where(x => x != StatueRoot))
-            slot.Tag = null;
+            slot.Tag_Field.Value = null!;
     }
 
     public void CreateOrUpdateVoiceDrivers()

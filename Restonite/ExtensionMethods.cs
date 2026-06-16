@@ -108,7 +108,7 @@ internal static class ExtensionMethods
     {
         var ui = new UIBuilder(editor.Slot);
         RadiantUI_Constants.SetupEditorStyle(ui);
-        editor.Setup(target, null, ui);
+        editor.Setup(target, null!, ui);
     }
 
     public static string ToLongString(this Component? component)

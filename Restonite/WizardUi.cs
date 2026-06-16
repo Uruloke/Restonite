@@ -215,7 +215,7 @@ internal class WizardUi
             UI.SplitVertically(0.03f, out RectTransform listHeader, out RectTransform listContent);
 
             UI.NestInto(listHeader);
-            var listTitle = UI.Text("Found Mesh Renderers", true, new Alignment?(), true, null);
+            var listTitle = UI.Text("Found Mesh Renderers", true, new Alignment?(), true, null!);
             listTitle.HorizontalAlign.Value = TextHorizontalAlignment.Left;
             listTitle.VerticalAlign.Value = TextVerticalAlignment.Top;
             UI.NestOut();
@@ -238,7 +238,7 @@ internal class WizardUi
             UI.ScrollArea();
             UI.FitContent(SizeFit.Disabled, SizeFit.PreferredSize);
 
-            SyncMemberEditorBuilder.Build(_foundMeshRenderers.References, "Mesh Renderers found", null, UI);
+            SyncMemberEditorBuilder.Build(_foundMeshRenderers.References, "Mesh Renderers found", null!, UI);
             UI.Current.Children.Last().Destroy();   // Remove the Add button
             _foundMeshRenderers.References.ElementsRemoving += (list, startIndex, count) =>
             {
