@@ -36,6 +36,7 @@ internal class StatueSystemWizard
                 return false;
 
             // Generate materials used by the system
+            _avatar.MigrateOriginalMaterials();
             _avatar.GenerateNormalMaterials();
             _avatar.GenerateStatueMaterials();
 
@@ -63,6 +64,7 @@ internal class StatueSystemWizard
                 return false;
 
             // Generate materials used by the system
+            _avatar.MigrateOriginalMaterials();
             _avatar.GenerateNormalMaterials();
             _avatar.GenerateStatueMaterials();
 

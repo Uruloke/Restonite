@@ -11,6 +11,51 @@ internal partial class Avatar
 {
     #region Public Methods
 
+    public void MigrateOriginalMaterials()
+    {
+        if (_scratchSpace is null || _generatedMaterials is null)
+            return;
+
+        Log.Info("=== Migrating original avatar materials");
+
+        var originalMaterials = _scratchSpace.AddSlot("Original Materials");
+
+        // Move all materials to scratch space slot temporarily
+        foreach (var material in MeshRenderers.SelectMany(x => x.MaterialSets).SelectMany(x => x))
+        {
+            // Skip material slots where either material is null
+            if(material.Normal is null || material.Statue is null)
+                continue;
+
+            if (material.Normal.Slot.IsChildOf(_generatedMaterials))
+            {
+                var originalMaterialSlot = material.Normal.Slot.GetComponent<DynamicReferenceVariable<Slot>>(x => x.VariableName.Value.Contains("Statue.OriginalNormalMaterial"))?.Reference.RawTarget;
+                var originalMaterial = originalMaterialSlot?.GetComponent<IAssetProvider<Material>>();
+
+                if(originalMaterial is not null && !originalMaterialSlot!.IsChildOf(_generatedMaterials))
+                {
+                    Log.Debug($"Using {originalMaterial.ToLongString()} instead of {material.Normal.ToLongString()}");
+                    ChangeMaterialReferences(material.Normal, originalMaterial);
+                }
+                else
+                {
+                    Log.Debug($"Copying {material.Normal.ToLongString()} to {originalMaterials.ToShortString()}");
+                    var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Normal, originalMaterials);
+
+                    ChangeMaterialReferences(material.Normal, newMaterial);
+                }
+            }
+
+            if (material.Statue.Slot.IsChildOf(_generatedMaterials))
+            {
+                Log.Debug($"Copying {material.Statue.ToLongString()} to {originalMaterials.ToShortString()}");
+                var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Statue, originalMaterials);
+
+                ChangeMaterialReferences(material.Statue, newMaterial);
+            }
+        }
+    }
+
     public void GenerateNormalMaterials()
     {
         if (_normalMaterials is null)
@@ -274,7 +319,15 @@ internal partial class Avatar
 
     private IAssetProvider<Material>? GetDefaultMaterial(IAssetProvider<Material>? defaultMaterial)
     {
-        var statue0Material = (IAssetProvider<Material>?)_generatedMaterials?
+        var statue0Material = (IAssetProvider<Material>?)_originalMaterials?
+            .FindChild("Statue Materials")?
+            .FindChild("Statue 0")?
+            .GetComponent<AssetProvider<Material>>();
+        statue0Material ??= (IAssetProvider<Material>?)_originalMaterials?
+            .FindChild("Statue Materials")?
+            .FindChild("0: Default")?
+            .GetComponent<AssetProvider<Material>>();
+        statue0Material ??= (IAssetProvider<Material>?)_generatedMaterials?
             .FindChild("Statue Materials")?
             .FindChild("Statue 0")?
             .GetComponent<AssetProvider<Material>>();

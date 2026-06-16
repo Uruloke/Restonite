@@ -403,6 +403,7 @@ internal partial class Avatar
 
         StatueRoot = children.FindSlot(slot => slot.FindChild("Drivers") is not null && slot.FindChild("Generated Materials") is not null, "Statue", "StatueSystemSetupSlot");
         _generatedMaterials = children.FindSlot(slot => slot.FindChild("Statue Materials") is not null && slot.FindChild("Normal Materials") is not null, "Generated Materials");
+        _originalMaterials = children.FindSlot(slot => slot.FindChild("Statue Materials") is not null && slot.FindChild("Normal Materials") is not null, "Original Materials");
         _drivers = children.FindSlot(slot => slot.FindChild("Avatar/Statue.BodyNormal") is not null, "Drivers");
 
         _legacySystem = AvatarRoot.FindChildInHierarchy("<color=#dadada>Statuefication</color>");
@@ -557,6 +558,7 @@ internal partial class Avatar
     private Slot? _defaults;
     private Slot? _drivers;
     private Slot? _generatedMaterials;
+    private Slot? _originalMaterials;
     private InstallType _installType;
     private Slot? _legacyAddons;
     private Slot? _legacySystem;
