@@ -32,12 +32,10 @@ internal partial class Avatar
             DynamicVariableHelper.CreateVariable<MeshRenderer>(meshRendererSlot, "MeshRendererConfig/StatueMeshRenderer", map.StatueMeshRenderer);
             DynamicVariableHelper.CreateVariable<Slot>(meshRendererSlot, "MeshRendererConfig/StatueSlot", map.StatueSlot);
 
-            var materialSets = meshRendererSlot.AddSlot("Material Sets");
-            materialSets.Tag_Field.Value = null;
-
             for(var set = 0; set < map.MaterialSets.Count; set++)
             {
-                var setSlot = materialSets.AddSlot($"<color=hero.green>Set {set}</color>");
+                var setSlot = meshRendererSlot.AddSlot($"<color=hero.green>Material Set {set}</color>");
+                meshRendererSlot.Tag_Field.Value = null;
 
                 for(var index = 0; index < map.MaterialSets[set].Count; index++)
                 {
@@ -51,6 +49,18 @@ internal partial class Avatar
                     DynamicVariableHelper.CreateVariable<IAssetProvider<Material>>(materialSlot, "MaterialSlotConfig/Statue", map.MaterialSets[set][index].Statue);
                     DynamicVariableHelper.CreateVariable<int>(materialSlot, "MaterialSlotConfig/TransitionType", (int)map.MaterialSets[set][index].TransitionType);
                     DynamicVariableHelper.CreateVariable<bool>(materialSlot, "MaterialSlotConfig/UseAsIs", map.MaterialSets[set][index].UseAsIs);
+
+                    if(map.MaterialSets[set][index].Normal is not null)
+                    {
+                        var normalAssetLoader = materialSlot.AttachComponent<AssetLoader<Material>>();
+                        normalAssetLoader.Asset.Target = map.MaterialSets[set][index].Normal!;
+                    }
+
+                    if(map.MaterialSets[set][index].Statue is not null)
+                    {
+                        var statueAssetLoader = materialSlot.AttachComponent<AssetLoader<Material>>();
+                        statueAssetLoader.Asset.Target = map.MaterialSets[set][index].Statue!;
+                    }
                 }
             }
         }
@@ -81,36 +91,32 @@ internal partial class Avatar
             if(dynVarSpace.TryReadValue<Slot>("StatueSlot", out var statueSlot))
                 meshRendererMap.StatueSlot = statueSlot;
 
-            var materialSets = meshRendererSlot.FindChild("Material Sets");
-            if(materialSets is not null)
+            for(var set = 0; set < meshRendererSlot.ChildrenCount; set++)
             {
-                for(var set = 0; set < materialSets.ChildrenCount; set++)
+                var setSlot = meshRendererSlot[set];
+                var materials = new List<MaterialMap>();
+
+                for(var index = 0; index < setSlot.ChildrenCount; index++)
                 {
-                    var setSlot = materialSets[set];
-                    var materials = new List<MaterialMap>();
+                    var indexSlot = meshRendererSlot[set][index];
+                    var material = new MaterialMap();
+                    var materialDynVarSpace = DynamicVariableHelper.FindSpace(indexSlot, "MaterialSlotConfig");
 
-                    for(var index = 0; index < setSlot.ChildrenCount; index++)
-                    {
-                        var indexSlot = materialSets[set][index];
-                        var material = new MaterialMap();
-                        var materialDynVarSpace = DynamicVariableHelper.FindSpace(indexSlot, "MaterialSlotConfig");
+                    if(materialDynVarSpace.TryReadValue<bool>("Clothes", out var clothes))
+                        material.Clothes = clothes;
+                    if(materialDynVarSpace.TryReadValue<IAssetProvider<Material>>("Normal", out var normal))
+                        material.Normal = normal;
+                    if(materialDynVarSpace.TryReadValue<IAssetProvider<Material>>("Statue", out var statue))
+                        material.Statue = statue;
+                    if(materialDynVarSpace.TryReadValue<int>("TransitionType", out var transitionType))
+                        material.TransitionType = (StatueType)transitionType;
+                    if(materialDynVarSpace.TryReadValue<bool>("UseAsIs", out var useAsIs))
+                        material.UseAsIs = useAsIs;
 
-                        if(materialDynVarSpace.TryReadValue<bool>("Clothes", out var clothes))
-                            material.Clothes = clothes;
-                        if(materialDynVarSpace.TryReadValue<IAssetProvider<Material>>("Normal", out var normal))
-                            material.Normal = normal;
-                        if(materialDynVarSpace.TryReadValue<IAssetProvider<Material>>("Statue", out var statue))
-                            material.Statue = statue;
-                        if(materialDynVarSpace.TryReadValue<int>("TransitionType", out var transitionType))
-                            material.TransitionType = (StatueType)transitionType;
-                        if(materialDynVarSpace.TryReadValue<bool>("UseAsIs", out var useAsIs))
-                            material.UseAsIs = useAsIs;
-
-                        materials.Add(material);
-                    }
-
-                    meshRendererMap.MaterialSets.Add(materials);
+                    materials.Add(material);
                 }
+
+                meshRendererMap.MaterialSets.Add(materials);
             }
 
             _lastConfiguration.Add(meshRendererMap);

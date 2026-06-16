@@ -395,7 +395,7 @@ Updates the legacy installation to a Remaster installation on the avatar.
         }
         finally
         {
-            scratchSpace.Destroy();
+            scratchSpace.DestroyPreservingAssets();
         }
     }
 
