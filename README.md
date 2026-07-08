@@ -33,6 +33,6 @@ not, an error message will be visible which tells you what went wrong.
 3. Start the game. If you want to verify that the mod is working you can check
    your Resonite logs.
 
-## Contributing and Building from source
+## Building from source
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md).
+See [DEVELOPMENT.md](./DEVELOPMENT.md).
