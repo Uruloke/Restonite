@@ -369,6 +369,118 @@ internal partial class Avatar
         broadcastDriver.Target.Value = AvatarRoot.GetComponentInChildren<AvatarAudioOutputManager>().BroadcastConfig.Volume.ReferenceID;
     }
 
+    public void CreateOrUpdateLimbColliders()
+    {
+        if(AvatarRoot is null || _userConfig is null)
+            return;
+
+        Log.Info("=== Creating colliders for statue anchor");
+
+        var limbTrackingSystem = _userConfig.FindChild("Limb Tracking System");
+        var colliders = limbTrackingSystem?.FindChild("Colliders");
+        var vrikAvatar = AvatarRoot.GetComponent<VRIKAvatar>();
+
+        if(colliders is null || vrikAvatar is null)
+        {
+            Log.Warn("Could not configure limb colliders");
+            return;
+        }
+
+        // Find _rigCollidersEnabledStates on VRIKAvatar
+        SyncList<FieldDrive<bool>>? rigCollidersEnabledStates = null;
+        for(var i = 0; i < vrikAvatar.SyncMemberCount; i++)
+        {
+            if(vrikAvatar.GetSyncMemberName(i) == "_rigCollidersEnabledStates")
+            {
+                rigCollidersEnabledStates = (SyncList<FieldDrive<bool>>)vrikAvatar.GetSyncMember(i);
+                break;
+            }
+        }
+        if(rigCollidersEnabledStates is null)
+        {
+            Log.Warn("Could not find rig colliders list");
+            return;
+        }
+
+        Log.Debug($"Found rig colliders list with {rigCollidersEnabledStates.Count} items on {rigCollidersEnabledStates.Slot.ToShortString()}");
+
+        colliders.DestroyChildren();
+
+        foreach(var fieldDrive in rigCollidersEnabledStates)
+        {
+            var colliderSlot = fieldDrive.Target.FindNearestParent<Slot>();
+            if(colliderSlot is null)
+            {
+                Log.Warn($"Could not determine slot for field drive");
+                continue;
+            }
+
+            var collider = colliderSlot.GetComponent<Collider>();
+            if(collider is null)
+            {
+                Log.Warn($"No collider found on {colliderSlot.ToShortString()}");
+                continue;
+            }
+
+            Log.Debug($"Found {collider.ToLongString()}");
+
+            var slotName = colliderSlot.Name == "Collider" ? colliderSlot.Parent.Name : colliderSlot.Name;
+
+            var newColliderSlot = colliders.AddSlot($"<color=hero.yellow>{slotName.StripRTFTags()}</color> Collider");
+            var cgt = newColliderSlot.AttachComponent<CopyGlobalTransform>();
+            cgt.Source.Target = colliderSlot;
+
+            var cgs = newColliderSlot.AttachComponent<CopyGlobalScale>();
+            cgs.Source.Target = colliderSlot;
+
+            var newCollider = newColliderSlot.AddSlot($"<color=hero.purple>{collider.GetType().Name}</color> on <color=hero.yellow>{slotName.StripRTFTags()}</color>");
+            if(collider is CapsuleCollider capsuleCollider)
+            {
+                var newCapsuleCollider = newCollider.CopyComponent(capsuleCollider);
+                newCollider.Position_Field.Value = newCapsuleCollider.Offset.Value;
+                newCapsuleCollider.Offset.Value = float3.Zero;
+
+                collider = newCapsuleCollider;
+            }
+            else if(collider is BoxCollider boxCollider)
+            {
+                var newBoxCollider = newCollider.CopyComponent(boxCollider);
+                newCollider.Position_Field.Value = newBoxCollider.Offset.Value;
+                newBoxCollider.Offset.Value = float3.Zero;
+
+                collider = newBoxCollider;
+            }
+            else if(collider is SphereCollider sphereCollider)
+            {
+                var newSphereCollider = newCollider.CopyComponent(sphereCollider);
+                newCollider.Position_Field.Value = newSphereCollider.Offset.Value;
+                newSphereCollider.Offset.Value = float3.Zero;
+
+                collider = newSphereCollider;
+            }
+            else
+            {
+                Log.Warn($"Unsupported collider {collider.GetType().Name} on {colliderSlot.ToShortString()}");
+                continue;
+            }
+
+            var colliderScale = newCollider.AttachComponent<DynamicValueVariableDriver<float3>>();
+            colliderScale.VariableName.Value = "StatueAnchor/ColliderScale";
+            colliderScale.Target.Target = newCollider.Scale_Field;
+            colliderScale.DefaultValue.Value = new float3(1, 1, 1);
+
+            var characterCollider = newCollider.AttachComponent<DynamicValueVariableDriver<bool>>();
+            characterCollider.VariableName.Value = "StatueAnchor/CharacterCollider";
+            characterCollider.Target.Target = collider.CharacterCollider;
+
+            var ignoreRaycasts = newCollider.AttachComponent<DynamicValueVariableDriver<bool>>();
+            ignoreRaycasts.VariableName.Value = "StatueAnchor/IgnoreRaycasts";
+            ignoreRaycasts.Target.Target = collider.IgnoreRaycasts;
+        }
+
+        Log.Info($"Copied {colliders.ChildrenCount} limb colliders for limb tracking system");
+    }
+
     public void OpenUserConfigInspector()
     {
         if (_userConfig is not null)

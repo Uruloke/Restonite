@@ -48,6 +48,8 @@ internal class StatueSystemWizard
 
             _avatar.CreateOrUpdateDefaults();
 
+            _avatar.CreateOrUpdateLimbColliders();
+
             // Save the configuration used for later
             _avatar.SaveLastConfiguration();
 
