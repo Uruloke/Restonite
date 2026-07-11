@@ -433,6 +433,12 @@ internal partial class Avatar
             var cgs = newColliderSlot.AttachComponent<CopyGlobalScale>();
             cgs.Source.Target = colliderSlot;
 
+            var dynVarSpace = newColliderSlot.AttachComponent<DynamicVariableSpace>();
+
+            var targetDynVar = newColliderSlot.AttachComponent<DynamicReferenceVariable<Slot>>();
+            targetDynVar.VariableName.Value = "ColliderBoneTarget";
+            targetDynVar.Reference.Target = colliderSlot.Name == "Collider" ? colliderSlot.Parent : colliderSlot;
+
             var newCollider = newColliderSlot.AddSlot($"<color=hero.purple>{collider.GetType().Name}</color> on <color=hero.yellow>{slotName.StripRTFTags()}</color>");
             if(collider is CapsuleCollider capsuleCollider)
             {
