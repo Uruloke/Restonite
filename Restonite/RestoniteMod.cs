@@ -11,12 +11,12 @@ public class RestoniteMod : ResoniteMod
     #region Public Fields
 
     public override string Name => "Restonite";
-    public override string Author => "Nermerner, Uruloke";
+    public override string Author => "Uruloke, Nermerner";
 
     public static Version AssemblyVersion => typeof(RestoniteMod).Assembly.GetName().Version!;
     public override string Version => $"{AssemblyVersion.Major}.{AssemblyVersion.Minor}.{AssemblyVersion.Build}";
 
-    public override string Link => "https://github.com/Nermerner/Restonite";
+    public override string Link => "https://github.com/Uruloke/Restonite";
 
     public const string WIZARD_TITLE = "Statue System Wizard (Mod)";
 
