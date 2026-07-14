@@ -214,9 +214,9 @@ internal partial class Avatar
                             ? $"{oldMaterialToStatueMaterialMap.Count}: Default"
                             : $"{oldMaterialToStatueMaterialMap.Count}: <color=hero.yellow>{map.StatueSlot!.Name.StripRTFTags()}</color> <color=hero.green>[Set {set}]</color> <color=hero.cyan>[Material {slot}]</color>");
 
-                        var newDefaultMaterialRefId = defaultMaterialAsIs
-                            ? newMaterialHolder.CopyComponent((AssetProvider<Material>)statueMaterial!).ReferenceID
-                            : MaterialHelpers.CreateStatueMaterial(normalMaterial!, statueMaterial!, newMaterialHolder).ReferenceID;
+                        IAssetProvider<Material> newMaterial = defaultMaterialAsIs
+                            ? (IAssetProvider<Material>)newMaterialHolder.CopyComponent((AssetProvider<Material>)statueMaterial!)
+                            : MaterialHelpers.CreateStatueMaterial(normalMaterial!, statueMaterial!, newMaterialHolder);
 
                         // Assigns Statue.Material.Assigned to equality
                         var assignedMaterialDriver = newMaterialHolder.AttachComponent<DynamicReferenceVariableDriver<IAssetProvider<Material>>>();
@@ -231,7 +231,7 @@ internal partial class Avatar
 
                         // Decides whether we use default or assigned
                         var booleanReferenceDriver = newMaterialHolder.AttachComponent<BooleanReferenceDriver<IAssetProvider<Material>>>();
-                        booleanReferenceDriver.TrueTarget.Value = newDefaultMaterialRefId;
+                        booleanReferenceDriver.TrueTarget.Value = newMaterial.ReferenceID;
                         bassignedMaterialDriver.Target.ForceLink(booleanReferenceDriver.FalseTarget);
 
                         // Checks if assigned material is null and writes that value to boolean ref driver
@@ -270,6 +270,10 @@ internal partial class Avatar
                             multiDriver.Drives.Add();
                             multiDriver.Drives[0].ForceLink(dynMaterialVariable.Reference);
                         }
+
+                        // Value/ReferenceCopy any drives from the old material
+                        // to the new that isn't being used by the statue system
+                        ((Component)statueMaterial).CopySyncDrivers((Component)newMaterial);
 
                         oldMaterialToStatueMaterialMap.Add(key, multiDriver);
                     }
