@@ -86,7 +86,7 @@ internal static class ExtensionMethods
             // Find matching member in destination
             for(var j = 0; j < target.SyncMemberCount; j++)
             {
-                var targetSyncMember = target.GetSyncMember(i);
+                var targetSyncMember = target.GetSyncMember(j);
 
                 if (sourceSyncMember.Name == targetSyncMember.Name && sourceSyncMember.GetType() == targetSyncMember.GetType()
                     && sourceSyncMember.IsDriven && sourceSyncMember.IsLinked && !targetSyncMember.IsDriven && !targetSyncMember.IsLinked)
