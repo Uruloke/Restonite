@@ -315,28 +315,28 @@ internal partial class Avatar
                 {
                     var material = map.MaterialSets[set][i];
 
-                    if (material.Normal is not null)
+                    if (material.Normal is null || material.Statue is null)
+                        continue;
+
+                    // Check for incompatible transition types for materials
+                    if ((material.TransitionType == StatueType.PlaneSlicer || material.TransitionType == StatueType.RadialSlicer)
+                        && material.Normal is not IPBS_Metallic && material.Normal is not IPBS_Specular && material.Normal is not PBS_DistanceLerpMaterial)
                     {
-                        // Check for incompatible transition types for materials
-                        if ((material.TransitionType == StatueType.PlaneSlicer || material.TransitionType == StatueType.RadialSlicer)
-                            && material.Normal is not IPBS_Metallic && material.Normal is not IPBS_Specular && material.Normal is not PBS_DistanceLerpMaterial)
-                        {
-                            Log.Error($"{material.Normal.GetType().Name} does not support {material.TransitionType}, aborting");
-                            return false;
-                        }
-                        else if ((material.TransitionType == StatueType.AlphaFade || material.TransitionType == StatueType.AlphaCutout)
-                            && material.Normal is not PBS_MultiUV_Metallic && material.Normal is not PBS_MultiUV_Specular
-                            && material.Normal is not PBS_DualSidedMetallic && material.Normal is not PBS_DualSidedSpecular
-                            && material.Normal is not PBS_VertexColorMetallic && material.Normal is not PBS_VertexColorSpecular
-                            && material.Normal is not PBS_DisplaceMetallic && material.Normal is not PBS_DisplaceSpecular
-                            && material.Normal is not PBSLerpMetallic && material.Normal is not PBSLerpSpecular
-                            && material.Normal is not IPBS_Metallic && material.Normal is not IPBS_Specular
-                            && material.Normal is not XiexeToonMaterial && material.Normal is not PBS_DistanceLerpMaterial
-                            && material.Normal is not UnlitMaterial)
-                        {
-                            Log.Error($"{material.Normal.GetType().Name} does not support {material.TransitionType}, aborting");
-                            return false;
-                        }
+                        Log.Error($"{material.Normal.GetType().Name} does not support {material.TransitionType}, aborting");
+                        return false;
+                    }
+                    else if ((material.TransitionType == StatueType.AlphaFade || material.TransitionType == StatueType.AlphaCutout)
+                        && material.Normal is not PBS_MultiUV_Metallic && material.Normal is not PBS_MultiUV_Specular
+                        && material.Normal is not PBS_DualSidedMetallic && material.Normal is not PBS_DualSidedSpecular
+                        && material.Normal is not PBS_VertexColorMetallic && material.Normal is not PBS_VertexColorSpecular
+                        && material.Normal is not PBS_DisplaceMetallic && material.Normal is not PBS_DisplaceSpecular
+                        && material.Normal is not PBSLerpMetallic && material.Normal is not PBSLerpSpecular
+                        && material.Normal is not IPBS_Metallic && material.Normal is not IPBS_Specular
+                        && material.Normal is not XiexeToonMaterial && material.Normal is not PBS_DistanceLerpMaterial
+                        && material.Normal is not UnlitMaterial)
+                    {
+                        Log.Error($"{material.Normal.GetType().Name} does not support {material.TransitionType}, aborting");
+                        return false;
                     }
                 }
             }
