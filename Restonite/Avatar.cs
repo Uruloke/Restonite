@@ -377,7 +377,7 @@ internal partial class Avatar
         Log.Info("=== Creating colliders for statue anchor");
 
         var limbTrackingSystem = _userConfig.FindChild("Limb Tracking System");
-        var colliders = limbTrackingSystem?.FindChild("Colliders");
+        var colliders = limbTrackingSystem?.FindChild("Auto Colliders");
         var vrikAvatar = AvatarRoot.GetComponent<VRIKAvatar>();
 
         if(colliders is null || vrikAvatar is null)
