@@ -15,6 +15,7 @@ internal class StatueSystemWizard
     public bool InstallSystemOnAvatar(Slot scratchSpace, Slot statueSystem, SyncRef<Slot> installSlot, SyncRef<Slot> contextMenuSlot, InstallType installType)
     {
         Log.Info($"=== Starting install for avatar {_avatar.AvatarRoot.ToShortString()}");
+        Log.Info($"Using mod version {RestoniteMod.AssemblyVersion.Major}.{RestoniteMod.AssemblyVersion.Minor}.{RestoniteMod.AssemblyVersion.Build}");
 
         // Start
         if (!_avatar.VerifyInstallRequirements())

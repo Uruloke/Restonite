@@ -311,8 +311,9 @@ internal class WizardUi
     private readonly Checkbox? _defaultMaterialAsIs;
     private readonly ReferenceMultiplexer<MeshRenderer>? _foundMeshRenderers;
 
-    private readonly string _helpText = """
+    private readonly string _helpText = $"""
 This mod installs and updates the Statue Remaster system on an avatar.
+Installed mod version: {RestoniteMod.AssemblyVersion.Major}.{RestoniteMod.AssemblyVersion.Minor}.{RestoniteMod.AssemblyVersion.Build}
 
 Advanced Mode:
 Advanced mode allows more fine grained control of what materials and options to use where.
