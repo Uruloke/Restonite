@@ -64,7 +64,10 @@ internal static class CloudSpawn
         slot.GlobalPosition = position;
         slot.GlobalScale = scale;
 
-        return slot.Children.First();
+        if(slot.ChildrenCount == 1)
+            return slot.Children.First();
+        else
+            return slot;
     }
 
     #endregion
