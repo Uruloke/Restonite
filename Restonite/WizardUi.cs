@@ -22,8 +22,8 @@ internal class WizardUi
             // Initialize cloud spawn
             var statueSystemLoadSlot = slot.AddSlot("Statue System Loader");
             var statueSystemCloudURIVariable = statueSystemLoadSlot.AttachComponent<CloudValueVariable<string>>();
-            statueSystemCloudURIVariable.Path.Value = "U-Azavit.Statue.Stable.AssetURI";
-            statueSystemCloudURIVariable.VariableOwnerId.Value = "U-Azavit";
+            statueSystemCloudURIVariable.Path.Value = "G-1RGn92ZLUMi.Statue.Stable.AssetURI";
+            statueSystemCloudURIVariable.VariableOwnerId.Value = "G-1RGn92ZLUMi";
             statueSystemCloudURIVariable.ChangeHandling.Value = CloudVariableChangeMode.Ignore;
             statueSystemCloudURIVariable.IsLinkedToCloud.Value = true;
             _uriVariable = statueSystemCloudURIVariable;
