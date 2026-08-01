@@ -6,7 +6,7 @@
     <RootNamespace>Restonite</RootNamespace>
     <Title>Restonite</Title>
     <Authors>Nermerner, Uruloke</Authors>
-    <Version>1.7.3</Version>
+    <Version>1.7.4</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <Description>A Resonite Mod Loader mod used to assist in the setup of the Statufication system on avatars.</Description>
     <LangVersion>12</LangVersion>
