@@ -124,7 +124,7 @@ internal static class ExtensionMethods
         if (material is null)
             return "<color=hero.orange>null</color>";
         else
-            return $"<color=hero.purple>{material.GetType().Name}</color> <color=gray>[{material.ReferenceID}]</color> on <color=hero.yellow>{material.Slot.Name.StripRTFTags()}</color>";
+            return $"<color=hero.purple>{material.GetType().Name}</color> <color=gray>[{material.ReferenceID}]</color> on <color=hero.yellow>{material.GetSlot().Name.StripRTFTags()}</color>";
     }
 
     public static string StripRTFTags(this string text)

@@ -27,9 +27,9 @@ internal partial class Avatar
             if(material.Normal is null || material.Statue is null)
                 continue;
 
-            if (material.Normal.Slot.IsChildOf(_generatedMaterials))
+            if (material.Normal.GetSlot().IsChildOf(_generatedMaterials))
             {
-                var originalMaterialSlot = material.Normal.Slot.GetComponent<DynamicReferenceVariable<Slot>>(x => x.VariableName.Value.Contains("Statue.OriginalNormalMaterial"))?.Reference.RawTarget;
+                var originalMaterialSlot = material.Normal.GetSlot().GetComponent<DynamicReferenceVariable<Slot>>(x => x.VariableName.Value.Contains("Statue.OriginalNormalMaterial"))?.Reference.RawTarget;
                 var originalMaterial = originalMaterialSlot?.GetComponent<IAssetProvider<Material>>();
 
                 if(originalMaterial is not null && !originalMaterialSlot!.IsChildOf(_generatedMaterials))
@@ -46,7 +46,7 @@ internal partial class Avatar
                 }
             }
 
-            if (material.Statue.Slot.IsChildOf(_generatedMaterials))
+            if (material.Statue.GetSlot().IsChildOf(_generatedMaterials))
             {
                 Log.Debug($"Copying {material.Statue.ToLongString()} to {originalMaterials.ToShortString()}");
                 var newMaterial = MaterialHelpers.CopyMaterialToSlot(material.Statue, originalMaterials);
